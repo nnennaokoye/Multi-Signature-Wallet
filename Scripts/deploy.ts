@@ -6,7 +6,7 @@ async function deployMultisig(boardMembers) {
     // Get the contract factory
     const Multisig = await ethers.getContractFactory("Multisig");
 
-    // Deploy contract with boardMembers as constructor argument
+    
     const _multiSigContract = await Multisig.deploy(boardMembers);
     
     // Wait for deployment to complete

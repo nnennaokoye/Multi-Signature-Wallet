@@ -14,7 +14,7 @@ describe("Multisig Wallet", function () {
 
     const Multisig = await ethers.getContractFactory("Multisig");
     multisig = await Multisig.deploy(validSigners);
-    await multisig.waitForDeployment(); // Correct way to wait for deployment in Ethers v6
+    await multisig.waitForDeployment(); 
   });
 
   it("should deploy with valid signers", async function () {
@@ -89,7 +89,6 @@ describe("Multisig Wallet", function () {
       ethers.parseEther("1")
     );
 
-    // Ensure contract has funds
     await owner.sendTransaction({
       to: await multisig.getAddress(),
       value: ethers.parseEther("10")
@@ -97,15 +96,15 @@ describe("Multisig Wallet", function () {
 
     const initialBalance = await ethers.provider.getBalance(recipient.address);
 
-    // Approve transaction by all signers
+   
     for (let i = 0; i < TOTAL_SIGNERS - 1; i++) {
       await multisig.connect(signers[i]).approveTransaction(1);
     }
 
-    // Ensure approvals are tracked
+    
     expect(await multisig.noOfApproval(1)).to.equal(TOTAL_SIGNERS - 1);
 
-    // Final approval triggers execution
+   
     const finalApprovalTx = await multisig.connect(signers[TOTAL_SIGNERS - 1]).approveTransaction(1);
     await finalApprovalTx.wait();
 
@@ -127,16 +126,16 @@ describe("Multisig Wallet", function () {
 
     expect(await multisig.noOfApproval(1)).to.equal(TOTAL_SIGNERS - 2);
 
-    // Try executing before reaching full approvals (should fail)
+  
     await expect(
       multisig.connect(signers[0]).executeTransaction(1)
     ).to.be.revertedWith("Not enough approvals");
 
-    // Add one more approval (still not enough)
+   
     await multisig.connect(signers[TOTAL_SIGNERS - 2]).approveTransaction(1);
     expect(await multisig.noOfApproval(1)).to.equal(TOTAL_SIGNERS - 1);
 
-    // Try executing the transaction again (should still fail)
+    /
     await expect(
       multisig.connect(signers[0]).executeTransaction(1)
     ).to.be.revertedWith("Not enough approvals");
@@ -150,7 +149,7 @@ describe("Multisig Wallet", function () {
       value: depositAmount
     });
 
-    // Check if the balance is correctly tracked
+    
     const balance = await ethers.provider.getBalance(await multisig.getAddress());
     expect(balance).to.equal(depositAmount);
   });
